@@ -15,52 +15,48 @@ use JsonSchema\Exception\ResourceNotFoundException;
 
 /**
  * Tries to retrieve JSON schemas from a URI using cURL library
- * 
- * @author Sander Coolen <sander@jibber.nl> 
+ *
+ * @author Sander Coolen <sander@jibber.nl>
  */
 class Curl implements UriRetrieverInterface
 {
     protected $contentType;
     protected $messageBody;
-    
+
     public function __construct()
     {
         if (!function_exists('curl_init')) {
             throw new \RuntimeException("cURL not installed");
         }
     }
-    
+
     public function retrieve($uri)
     {
         $ch = curl_init();
-        
+
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: ' . Validator::SCHEMA_MEDIA_TYPE));
-        
+
         $response = curl_exec($ch);
         if (false === $response) {
             throw new ResourceNotFoundException('JSON schema not found');
         }
-        
+
         $this->fetchMessageBody($response);
         $this->fetchContentType($response);
-        
+
         curl_close($ch);
-        
+
         return $this->messageBody;
     }
-    
-    /**
-     * @param string $response cURL HTTP response
-     */
-    private function fetchMessageBody($response)
+
+    public function getContentType()
     {
-        preg_match("/(?:\r\n){2}(.*)$/ms", $response, $match);
-        $this->messageBody = $match[1];
+        return $this->contentType;
     }
-    
+
     /**
      * @param string $response cURL HTTP response
      * @return boolean Whether the Content-Type header was found or not
@@ -69,14 +65,19 @@ class Curl implements UriRetrieverInterface
     {
         if (0 < preg_match("/Content-Type:(\V*)/ims", $response, $match)) {
             $this->contentType = trim($match[1]);
-            
+
             return true;
         }
+
         return false;
     }
-    
-    public function getContentType()
+
+    /**
+     * @param string $response cURL HTTP response
+     */
+    private function fetchMessageBody($response)
     {
-        return $this->contentType;
+        preg_match("/(?:\r\n){2}(.*)$/ms", $response, $match);
+        $this->messageBody = $match[1];
     }
 }

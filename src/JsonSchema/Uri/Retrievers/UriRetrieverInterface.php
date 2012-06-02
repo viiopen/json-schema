@@ -11,12 +11,12 @@ namespace JsonSchema\Uri\Retrievers;
 
 /**
  * Interface for URI retrievers
- * 
- * @author Sander Coolen <sander@jibber.nl> 
+ *
+ * @author Sander Coolen <sander@jibber.nl>
  */
 interface UriRetrieverInterface
 {
     public function retrieve($uri);
-    
+
     public function getContentType();
 }

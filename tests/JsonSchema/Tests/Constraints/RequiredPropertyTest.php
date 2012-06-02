@@ -49,10 +49,10 @@ class RequiredPropertyTest extends BaseTestCase
                   }
                 }'
             ),
-    		array(
+            array(
                 '{
-				 "number": 0
-				}',
+                 "number": 0
+                }',
                 '{
                   "type":"object",
                   "properties":{
@@ -60,10 +60,10 @@ class RequiredPropertyTest extends BaseTestCase
                   }
                 }'
             ),
-			array(
+            array(
                 '{
-				 "is_active": false
-				}',
+                 "is_active": false
+                }',
                 '{
                   "type":"object",
                   "properties":{
@@ -71,10 +71,10 @@ class RequiredPropertyTest extends BaseTestCase
                   }
                 }'
             ),
-			array(
+            array(
                 '{
-				 "status": null
-				}',
+                 "status": null
+                }',
                 '{
                   "type":"object",
                   "properties":{
@@ -82,10 +82,10 @@ class RequiredPropertyTest extends BaseTestCase
                   }
                 }'
             ),
-			array(
+            array(
                 '{
-				 "users": []
-				}',
+                 "users": []
+                }',
                 '{
                   "type":"object",
                   "properties":{
