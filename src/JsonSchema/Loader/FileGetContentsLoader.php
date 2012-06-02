@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-namespace JsonSchema\Uri\Retrievers;
+namespace JsonSchema\Loader;
 
 use JsonSchema\Validator;
 
@@ -16,7 +16,7 @@ use JsonSchema\Validator;
  *
  * @author Sander Coolen <sander@jibber.nl>
  */
-class FileGetContents implements UriRetrieverInterface
+class FileGetContentsLoader implements LoaderInterface
 {
     protected $contentType;
     protected $messageBody;
@@ -33,7 +33,10 @@ class FileGetContents implements UriRetrieverInterface
         }
     }
 
-    public function retrieve($uri)
+    /**
+     * {@inheritDoc}
+     */
+    public function load($uri)
     {
         $context = stream_context_create(array(
             'http' => array(
@@ -52,6 +55,9 @@ class FileGetContents implements UriRetrieverInterface
         return $this->messageBody;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getContentType()
     {
         return $this->contentType;
@@ -65,7 +71,7 @@ class FileGetContents implements UriRetrieverInterface
     private function fetchContentType(array $headers)
     {
         foreach ($headers as $header) {
-            if ($this->contentType = self::getContentTypeMatchInHeader($header)) {
+            if ($this->contentType = static::getContentTypeMatchInHeader($header)) {
                 return true;
             }
         }

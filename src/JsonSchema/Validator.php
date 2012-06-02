@@ -15,7 +15,7 @@ use JsonSchema\Constraints\Constraint;
 use JsonSchema\Exception\InvalidSchemaMediaTypeException;
 use JsonSchema\Exception\JsonDecodingException;
 
-use JsonSchema\Uri\Retrievers\UriRetrieverInterface;
+use JsonSchema\Loader\LoaderInterface;
 
 /**
  * A JsonSchema Constraint
@@ -33,11 +33,11 @@ class Validator extends Constraint
     /**
      * Sets the URI retriever the validator will use. FileGetContents by default
      *
-     * @param UriRetrieverInterface $retriever
+     * @param LoaderInterface $loader
      */
-    public static function setUriRetriever(UriRetrieverInterface $retriever)
+    public static function setUriRetriever(LoaderInterface $loader)
     {
-        self::$uriRetriever = $retriever;
+        self::$uriRetriever = $loader;
     }
 
     /**
@@ -50,10 +50,10 @@ class Validator extends Constraint
     public static function retrieveUri($uri)
     {
         if (null === self::$uriRetriever) {
-            self::setUriRetriever(new Uri\Retrievers\FileGetContents);
+            self::setUriRetriever(new Loader\FileGetContentsLoader());
         }
 
-        $contents = self::$uriRetriever->retrieve($uri);
+        $contents = self::$uriRetriever->load($uri);
         if (self::SCHEMA_MEDIA_TYPE !== self::$uriRetriever->getContentType()) {
             throw new InvalidSchemaMediaTypeException(sprintf('Media type %s expected', self::SCHEMA_MEDIA_TYPE));
         }

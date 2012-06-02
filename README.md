@@ -6,16 +6,18 @@ See [json-schema](http://json-schema.org/) for more details.
 
 ## Installation
 
-### Library
-
-    $ git clone https://github.com/justinrainbow/json-schema.git
+```console
+git clone https://github.com/justinrainbow/json-schema.git
+```
 
 ### Dependencies
 
-#### [`Composer`](https://github.com/composer/composer) (*will use the Composer ClassLoader*)
+### [`Composer`](https://github.com/composer/composer) (*will use the Composer ClassLoader*)
 
-    $ wget http://getcomposer.org/composer.phar
-    $ php composer.phar install
+```console
+wget http://getcomposer.org/composer.phar
+php composer.phar install
+```
 
 ## Usage
 
@@ -29,12 +31,15 @@ if ($validator->isValid()) {
     echo "The supplied JSON validates against the schema.\n";
 } else {
     echo "JSON does not validate. Violations:\n";
+
     foreach ($validator->getErrors() as $error) {
-        echo sprintf("[%s] %s\n",$error['property'], $error['message']);
+        printf("[%s] %s\n", $error['property'], $error['message']);
     }
 }
 ```
 
 ## Running the tests
 
-    $ phpunit
+```console
+phpunit
+```

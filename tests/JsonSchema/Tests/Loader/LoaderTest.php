@@ -7,33 +7,19 @@
  * file that was distributed with this source code.
  */
 
-namespace JsonSchema\Tests\Uri;
+namespace JsonSchema\Tests\Loader;
 
 use JsonSchema\Validator;
 
-class UriRetrieverTest extends \PHPUnit_Framework_TestCase
+class LoaderTest extends \PHPUnit_Framework_TestCase
 {
     protected $validator;
 
-    protected function setUp()
+    private static function setParentSchemaExtendsValue(&$parentSchema, $value)
     {
-        $this->validator = new Validator();
-    }
-
-    private function getCurlRetrieverMock($returnSchema, $returnMediaType = Validator::SCHEMA_MEDIA_TYPE)
-    {
-        $curlRetriever = $this->getMock('JsonSchema\Uri\Retrievers\Curl', array('retrieve', 'getContentType'));
-
-        $curlRetriever->expects($this->at(0))
-                      ->method('retrieve')
-                      ->with($this->equalTo('http://some.host.at/somewhere/parent'))
-                      ->will($this->returnValue($returnSchema));
-
-        $curlRetriever->expects($this->atLeastOnce()) // index 1 and/or 3
-                      ->method('getContentType')
-                      ->will($this->returnValue($returnMediaType));
-
-        return $curlRetriever;
+        $parentSchemaDecoded = json_decode($parentSchema, true);
+        $parentSchemaDecoded['extends'] = $value;
+        $parentSchema = json_encode($parentSchemaDecoded);
     }
 
     /**
@@ -61,10 +47,11 @@ class UriRetrieverTest extends \PHPUnit_Framework_TestCase
         self::setParentSchemaExtendsValue($parentSchema, 'grandparent');
         $curlRetrieverMock = $this->getCurlRetrieverMock($parentSchema);
 
-        $curlRetrieverMock->expects($this->at(2))
-                          ->method('retrieve')
-                          ->with($this->equalTo('http://some.host.at/somewhere/grandparent'))
-                          ->will($this->returnValue('{"type":"object","title":"grand-parent"}'));
+        $curlRetrieverMock
+            ->expects($this->at(2))
+            ->method('load')
+            ->with($this->equalTo('http://some.host.at/somewhere/grandparent'))
+            ->will($this->returnValue('{"type":"object","title":"grand-parent"}'));
 
         Validator::setUriRetriever($curlRetrieverMock);
 
@@ -74,13 +61,6 @@ class UriRetrieverTest extends \PHPUnit_Framework_TestCase
 
         $this->validator->check($decodedJson, $decodedJsonSchema);
         $this->assertTrue($this->validator->isValid());
-    }
-
-    private static function setParentSchemaExtendsValue(&$parentSchema, $value)
-    {
-        $parentSchemaDecoded = json_decode($parentSchema, true);
-        $parentSchemaDecoded['extends'] = $value;
-        $parentSchema = json_encode($parentSchemaDecoded);
     }
 
     /**
@@ -150,5 +130,28 @@ EOF;
         return array(
             array($childSchema, $parentSchema)
         );
+    }
+
+    protected function setUp()
+    {
+        $this->validator = new Validator();
+    }
+
+    private function getCurlRetrieverMock($returnSchema, $returnMediaType = Validator::SCHEMA_MEDIA_TYPE)
+    {
+        $curlRetriever = $this->getMock('JsonSchema\Loader\CurlLoader', array('load', 'getContentType'));
+
+        $curlRetriever
+            ->expects($this->at(0))
+            ->method('load')
+            ->with($this->equalTo('http://some.host.at/somewhere/parent'))
+            ->will($this->returnValue($returnSchema));
+
+        $curlRetriever
+            ->expects($this->atLeastOnce()) // index 1 and/or 3
+            ->method('getContentType')
+            ->will($this->returnValue($returnMediaType));
+
+        return $curlRetriever;
     }
 }

@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-namespace JsonSchema\Uri\Retrievers;
+namespace JsonSchema\Loader;
 
 use JsonSchema\Validator;
 
@@ -18,11 +18,14 @@ use JsonSchema\Exception\ResourceNotFoundException;
  *
  * @author Sander Coolen <sander@jibber.nl>
  */
-class Curl implements UriRetrieverInterface
+class CurlLoader implements LoaderInterface
 {
     protected $contentType;
     protected $messageBody;
 
+    /**
+     * @throws \RuntimeException When cURL extension is not installed.
+     */
     public function __construct()
     {
         if (!function_exists('curl_init')) {
@@ -30,7 +33,10 @@ class Curl implements UriRetrieverInterface
         }
     }
 
-    public function retrieve($uri)
+    /**
+     * {@inheritDoc}
+     */
+    public function load($uri)
     {
         $ch = curl_init();
 
@@ -52,6 +58,9 @@ class Curl implements UriRetrieverInterface
         return $this->messageBody;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getContentType()
     {
         return $this->contentType;
@@ -59,6 +68,7 @@ class Curl implements UriRetrieverInterface
 
     /**
      * @param string $response cURL HTTP response
+     *
      * @return boolean Whether the Content-Type header was found or not
      */
     protected function fetchContentType($response)

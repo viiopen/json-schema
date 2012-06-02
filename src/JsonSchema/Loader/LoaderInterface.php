@@ -7,16 +7,16 @@
  * file that was distributed with this source code.
  */
 
-namespace JsonSchema\Uri\Retrievers;
+namespace JsonSchema\Loader;
 
 /**
  * Interface for URI retrievers
  *
  * @author Sander Coolen <sander@jibber.nl>
  */
-interface UriRetrieverInterface
+interface LoaderInterface
 {
-    public function retrieve($uri);
+    public function load($uri);
 
     public function getContentType();
 }

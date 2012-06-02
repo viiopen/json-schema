@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-namespace JsonSchema\Uri;
+namespace JsonSchema\Loader;
 
 use JsonSchema\Exception\UriResolverException;
 

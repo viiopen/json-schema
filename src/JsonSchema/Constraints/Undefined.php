@@ -123,7 +123,7 @@ class Undefined extends Constraint
 
     protected function validateUri($schemaUri = null, $schema, $path = null, $i = null)
     {
-        $resolver = new \JsonSchema\Uri\UriResolver();
+        $resolver = new \JsonSchema\Loader\UriResolver();
 
         if ($resolver->isValid($schemaUri)) {
             $schemaId = property_exists($schema, 'id') ? $schema->id : null;
