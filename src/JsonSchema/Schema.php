@@ -19,16 +19,16 @@ use JsonSchema\Exception\JsonDecodingException;
 class Schema implements SchemaInterface
 {
     public $id;
-
     public $type;
-
     public $name;
-
+    public $links;
+    public $default;
+    public $format;
     public $description;
-
     public $extends;
-
     public $properties;
+    public $required;
+    public $additionalProperties;
 
     public function setId($id)
     {
@@ -149,5 +149,20 @@ class Schema implements SchemaInterface
     public function getLinks()
     {
         return $this->links;
+    }
+
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    public function hasDefault()
+    {
+        return null !== $this->default;
+    }
+
+    public function isRequired()
+    {
+        return $this->required == true;
     }
 }

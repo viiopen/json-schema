@@ -9,6 +9,7 @@
 
 namespace JsonSchema\Loader;
 
+use JsonSchema\Exception\ResourceNotFoundException;
 use JsonSchema\Validator;
 
 /**
@@ -29,16 +30,20 @@ class FileGetContentsLoader implements LoaderInterface
         $context = stream_context_create(array(
             'http' => array(
                 'method' => 'GET',
-                'header' => "Accept: " . Validator::SCHEMA_MEDIA_TYPE
-            )));
+                'header' => "Accept: " . LoaderInterface::SCHEMA_MEDIA_TYPE
+            )
+        ));
 
-        $response = file_get_contents($uri);
+        $response = @file_get_contents($uri, false, $context);
         if (false === $response) {
             throw new ResourceNotFoundException('JSON schema not found');
         }
 
         $this->messageBody = $response;
-        $this->fetchContentType($http_response_header);
+
+        if (isset($http_response_header)) {
+            $this->fetchContentType($http_response_header);
+        }
 
         return $this->messageBody;
     }
@@ -72,7 +77,9 @@ class FileGetContentsLoader implements LoaderInterface
             }
         }
 
+        // @codeCoverageIgnoreStart
         return false;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -82,7 +89,7 @@ class FileGetContentsLoader implements LoaderInterface
      */
     private function getContentTypeMatchInHeader($header)
     {
-        if (0 < preg_match("/Content-Type:(\V*)/ims", $header, $match)) {
+        if (0 < preg_match("/Content-Type:([^;]*)/ims", $header, $match)) {
             return trim($match[1]);
         }
     }

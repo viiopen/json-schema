@@ -9,9 +9,8 @@
 
 namespace JsonSchema\Loader;
 
-use JsonSchema\Validator;
-
 use JsonSchema\Exception\ResourceNotFoundException;
+use JsonSchema\Validator;
 
 /**
  * Tries to retrieve JSON schemas from a URI using cURL library
@@ -28,9 +27,11 @@ class CurlLoader implements LoaderInterface
      */
     public function __construct()
     {
+        // @codeCoverageIgnoreStart
         if (!function_exists('curl_init')) {
             throw new \RuntimeException("cURL not installed");
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -43,10 +44,10 @@ class CurlLoader implements LoaderInterface
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: ' . Validator::SCHEMA_MEDIA_TYPE));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: ' . LoaderInterface::SCHEMA_MEDIA_TYPE));
 
         $response = curl_exec($ch);
-        if (false === $response) {
+        if (false === $response || 404 === curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
             throw new ResourceNotFoundException('JSON schema not found');
         }
 
@@ -81,13 +82,15 @@ class CurlLoader implements LoaderInterface
      */
     protected function fetchContentType($response)
     {
-        if (0 < preg_match("/Content-Type:(\V*)/ims", $response, $match)) {
+        if (0 < preg_match("/Content-Type:([^;]*)/ims", $response, $match)) {
             $this->contentType = trim($match[1]);
 
             return true;
         }
 
+        // @codeCoverageIgnoreStart
         return false;
+        // @codeCoverageIgnoreEnd
     }
 
     /**

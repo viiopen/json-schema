@@ -16,6 +16,7 @@ class Property implements PropertyInterface
     public $additionalItems;
     public $additionalProperties = true;
     public $description;
+    public $default;
     public $disallow;
     public $enum;
     public $exclusiveMaximum;
@@ -66,5 +67,10 @@ class Property implements PropertyInterface
     public function isRequired()
     {
         return $this->required == true;
+    }
+
+    public function getRequires()
+    {
+        return $this->requires;
     }
 }

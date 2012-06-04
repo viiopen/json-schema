@@ -14,7 +14,7 @@ namespace JsonSchema;
  *
  * @author Justin Rainbow <justin.rainbow@gmail.com>
  */
-interface SchemaInterface
+interface SchemaInterface extends PropertyInterface
 {
     function getId();
 

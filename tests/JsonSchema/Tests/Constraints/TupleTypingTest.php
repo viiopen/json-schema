@@ -43,7 +43,7 @@ class TupleTypingTest extends BaseTestCase
                       "items":[
                         {"type":"string"},
                         {"type":"number"}
-                      ] ,
+                      ],
                       "additionalProperties":false
                     }
                   }
@@ -61,7 +61,7 @@ class TupleTypingTest extends BaseTestCase
                       "items":[
                         {"type":"string"},
                         {"type":"number"}
-                      ] ,
+                      ],
                       "additionalProperties":{"type":"string"}
                     }
                   }

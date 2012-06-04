@@ -12,6 +12,7 @@ namespace JsonSchema;
 use JsonSchema\Exception\InvalidArgumentException;
 use JsonSchema\Exception\InvalidSchemaException;
 use JsonSchema\Exception\InvalidSchemaMediaTypeException;
+use JsonSchema\Exception\ResourceNotFoundException;
 use JsonSchema\Exception\JsonDecodingException;
 use JsonSchema\Loader\LoaderInterface;
 
@@ -65,9 +66,15 @@ class SchemaFactory
         }
 
         $obj = new Schema();
+        $refl = new \ReflectionObject($obj);
 
         foreach ($schema as $field => $value) {
-            $obj->{$field} = $value;
+            $setter = 'set' . ucfirst($field);
+            if ($refl->hasMethod($setter)) {
+                $obj->{$setter}($value);
+            } else {
+                $obj->{$field} = $value;
+            }
         }
 
         return $obj;
@@ -78,8 +85,15 @@ class SchemaFactory
         $prop = new Property();
         $prop->name = $name;
 
+        $refl = new \ReflectionObject($prop);
+
         foreach ($property as $field => $value) {
-            $prop->{$field} = $value;
+            $setter = 'set' . ucfirst($field);
+            if ($refl->hasMethod($setter)) {
+                $prop->{$setter}($value);
+            } else {
+                $prop->{$field} = $value;
+            }
         }
 
         return $prop;
@@ -107,10 +121,11 @@ class SchemaFactory
             }
 
             $contents = $loader->load($uri);
-            if (LoaderInterface::SCHEMA_MEDIA_TYPE !== $loader->getContentType()) {
+            if (LoaderInterface::SCHEMA_MEDIA_TYPE !== $type = $loader->getContentType()) {
                 throw new InvalidSchemaMediaTypeException(sprintf(
-                    'Media type %s expected',
-                    LoaderInterface::SCHEMA_MEDIA_TYPE
+                    'Media type %s expected but got %s',
+                    LoaderInterface::SCHEMA_MEDIA_TYPE,
+                    $type
                 ));
             }
 
