@@ -10,7 +10,9 @@
 namespace JsonSchema\Loader;
 
 use JsonSchema\Exception\ResourceNotFoundException;
+use JsonSchema\Util\Uri;
 use JsonSchema\Validator;
+
 
 /**
  * Tries to retrieve JSON schemas from a URI using cURL library
@@ -72,7 +74,7 @@ class CurlLoader implements LoaderInterface
      */
     public function supports($uri)
     {
-        return true;
+        return Uri::isValid($uri);
     }
 
     /**

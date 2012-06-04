@@ -18,6 +18,8 @@ class SchemaTest extends \PHPUnit_Framework_TestCase
     {
         $schema = SchemaFactory::create(<<<SCHEMA
 {
+    "name":"City, State",
+    "description":"You must define a city and state",
     "type":"object",
     "properties":{
         "state":{"type":"string","requires":"city"},
@@ -43,13 +45,14 @@ SCHEMA
         $this->assertFalse($schema->getProperty('city')->isRequired());
 
         $this->assertEquals(null, $schema->getId());
-        $this->assertEquals(null, $schema->getDescription());
-        $this->assertEquals(null, $schema->getName());
+        $this->assertEquals('You must define a city and state', $schema->getDescription());
+        $this->assertEquals('City, State', $schema->getName());
         $this->assertEquals(null, $schema->getLinks());
         $this->assertFalse($schema->hasDefault());
         $this->assertFalse($schema->isRequired());
         $this->assertFalse($schema->hasExtends());
         $this->assertEquals(null, $schema->getExtends());
         $this->assertCount(2, $schema->getProperties());
+        $this->assertEquals(null, $schema->getDefault());
     }
 }

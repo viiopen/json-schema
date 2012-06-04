@@ -10,6 +10,7 @@
 namespace JsonSchema\Loader;
 
 use JsonSchema\Exception\ResourceNotFoundException;
+use JsonSchema\Util\Uri;
 use JsonSchema\Validator;
 
 /**

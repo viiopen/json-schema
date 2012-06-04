@@ -49,6 +49,11 @@ class Property implements PropertyInterface
         return $this->type;
     }
 
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
     public function getDescription()
     {
         return $this->description;

@@ -116,10 +116,11 @@ class Uri
              . $components['path'];
 
         if (array_key_exists('query', $components)) {
-            $uri .= $components['query'];
+            $uri .= '?' . $components['query'];
         }
+
         if (array_key_exists('fragment', $components)) {
-            $uri .= $components['fragment'];
+            $uri .= '#' . $components['fragment'];
         }
 
         return $uri;
@@ -133,6 +134,10 @@ class Uri
     public static function isValid($uri)
     {
         $components = static::parse($uri);
+
+        if (!isset($components['scheme']) || empty($components['scheme'])) {
+            return false;
+        }
 
         return !empty($components);
     }

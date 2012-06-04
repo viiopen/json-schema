@@ -9,8 +9,20 @@
 
 namespace JsonSchema\Tests\Constraints;
 
+use JsonSchema\Validator;
+
 class SelfDefinedSchemaTest extends BaseTestCase
 {
+    /**
+     * @expectedException JsonSchema\Exception\InvalidArgumentException
+     */
+    public function testAttemptingToValidateAgainstNoSchema()
+    {
+        $validator = new Validator();
+
+        $validator->check(json_decode('{"name":"nothing"}'), null);
+    }
+
     public function getInvalidTests()
     {
         return array(

@@ -50,7 +50,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
         $curlLoaderMock = $this->getCurlLoaderMock($parentSchema);
 
         $curlLoaderMock
-            ->expects($this->at(2))
+            ->expects($this->atLeastOnce())
             ->method('load')
             ->with($this->equalTo('http://some.host.at/somewhere/grandparent'))
             ->will($this->returnValue('{"type":"object","title":"grand-parent"}'));

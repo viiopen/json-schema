@@ -25,6 +25,7 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(LoaderInterface::SCHEMA_MEDIA_TYPE));
 
         SchemaFactory::setLoaders(array(
+            new \JsonSchema\Loader\CurlLoader(),
             $loaderMock
         ));
 
@@ -50,6 +51,11 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
         $schema = SchemaFactory::import('http://json-schema.org/schema');
 
         $this->assertInstanceOf('JsonSchema\Schema', $schema);
+    }
+
+    public function testAddingLoader()
+    {
+        SchemaFactory::addLoader(new \JsonSchema\Loader\FileGetContentsLoader());
     }
 
     /**
@@ -92,5 +98,13 @@ class SchemaFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreatingInvalidSchema()
     {
         SchemaFactory::create(null);
+    }
+
+    /**
+     * @expectedException JsonSchema\Exception\InvalidArgumentException
+     */
+    public function testSettingAnInvalidLoader()
+    {
+        SchemaFactory::setLoaders(array(null));
     }
 }
