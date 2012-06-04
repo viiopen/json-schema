@@ -25,9 +25,17 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "zendframework/zend-registry": "2.0.*",
+        "zendframework/zend-uri": "2.0.*"
     },
     "autoload": {
         "psr-0": { "JsonSchema": "src/" }
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.zendframework.com/"
+        }
+    ]
 }

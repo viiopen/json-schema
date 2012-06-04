@@ -29,19 +29,13 @@ class UriResolver implements ResolverInterface
      */
     public function resolve($uri, $baseUri = null)
     {
-        $components = Uri::parse($uri);
-        $path = $components['path'];
-
-        if ((array_key_exists('scheme', $components)) && ('http' === $components['scheme'])) {
+        if (null === $baseUri) {
             return $uri;
         }
 
-        $baseComponents = Uri::parse($baseUri);
-        $basePath = $baseComponents['path'];
+        $base = \Zend\Uri\UriFactory::factory($uri);
 
-        $baseComponents['path'] = Uri::addPath($path, $basePath);
-
-        return Uri::generate($baseComponents);
+        return $base->resolve($baseUri);
     }
 
     /**

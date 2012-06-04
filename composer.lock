@@ -1,0 +1,25 @@
+{
+    "hash": "b88998baacde30f919225384e0e6835b",
+    "packages": [
+        {
+            "package": "zendframework/zend-registry",
+            "version": "2.0.0-beta4"
+        },
+        {
+            "package": "zendframework/zend-uri",
+            "version": "2.0.0-beta4"
+        },
+        {
+            "package": "zendframework/zend-validator",
+            "version": "2.0.0-beta4"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": [
+
+    ]
+}

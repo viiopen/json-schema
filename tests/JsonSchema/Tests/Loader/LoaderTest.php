@@ -46,7 +46,9 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveRelativeUri($childSchema, $parentSchema)
     {
-        self::setParentSchemaExtendsValue($parentSchema, 'grandparent');
+        $schema = json_decode($parentSchema);
+        $schema->extends = 'grandparent';
+        $parentSchema = json_encode($schema);
         $curlLoaderMock = $this->getCurlLoaderMock($parentSchema);
 
         $curlLoaderMock
@@ -144,7 +146,7 @@ EOF;
         $loader = $this->getMock('JsonSchema\Loader\CurlLoader', array('load', 'getContentType'));
 
         $loader
-            ->expects($this->at(0))
+            ->expects($this->atLeastOnce())
             ->method('load')
             ->with($this->equalTo('http://some.host.at/somewhere/parent'))
             ->will($this->returnValue($returnSchema));
