@@ -9,6 +9,8 @@
 
 namespace JsonSchema\Tests\Loader;
 
+use JsonSchema\Loader\LoaderInterface;
+use JsonSchema\SchemaFactory;
 use JsonSchema\Validator;
 
 class LoaderTest extends \PHPUnit_Framework_TestCase
@@ -27,9 +29,9 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testChildExtendsParent($childSchema, $parentSchema)
     {
-        $curlRetrieverMock = $this->getCurlRetrieverMock($parentSchema);
+        $curlLoaderMock = $this->getCurlLoaderMock($parentSchema);
 
-        Validator::setUriRetriever($curlRetrieverMock);
+        SchemaFactory::setLoaders(array($curlLoaderMock));
 
         $json = '{"childProp":"infant", "parentProp":false}';
         $decodedJson = json_decode($json);
@@ -45,15 +47,15 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
     public function testResolveRelativeUri($childSchema, $parentSchema)
     {
         self::setParentSchemaExtendsValue($parentSchema, 'grandparent');
-        $curlRetrieverMock = $this->getCurlRetrieverMock($parentSchema);
+        $curlLoaderMock = $this->getCurlLoaderMock($parentSchema);
 
-        $curlRetrieverMock
+        $curlLoaderMock
             ->expects($this->at(2))
             ->method('load')
             ->with($this->equalTo('http://some.host.at/somewhere/grandparent'))
             ->will($this->returnValue('{"type":"object","title":"grand-parent"}'));
 
-        Validator::setUriRetriever($curlRetrieverMock);
+        SchemaFactory::setLoaders(array($curlLoaderMock));
 
         $json = '{"childProp":"infant", "parentProp":false}';
         $decodedJson = json_decode($json);
@@ -69,9 +71,9 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidSchemaMediaType($childSchema, $parentSchema)
     {
-        $curlRetrieverMock = $this->getCurlRetrieverMock($parentSchema, 'text/html');
+        $curlLoaderMock = $this->getCurlLoaderMock($parentSchema, 'text/html');
 
-        Validator::setUriRetriever($curlRetrieverMock);
+        SchemaFactory::setLoaders(array($curlLoaderMock));
 
         $json = '{"childProp":"infant", "parentProp":false}';
         $decodedJson = json_decode($json);
@@ -86,9 +88,9 @@ class LoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testParentJsonError($childSchema, $parentSchema)
     {
-        $curlRetrieverMock = $this->getCurlRetrieverMock('<html>', 'application/schema+json');
+        $curlLoaderMock = $this->getCurlLoaderMock('<html>', 'application/schema+json');
 
-        Validator::setUriRetriever($curlRetrieverMock);
+        SchemaFactory::setLoaders(array($curlLoaderMock));
 
         $json = '{}';
         $decodedJson = json_decode($json);
@@ -137,21 +139,21 @@ EOF;
         $this->validator = new Validator();
     }
 
-    private function getCurlRetrieverMock($returnSchema, $returnMediaType = Validator::SCHEMA_MEDIA_TYPE)
+    private function getCurlLoaderMock($returnSchema, $returnMediaType = LoaderInterface::SCHEMA_MEDIA_TYPE)
     {
-        $curlRetriever = $this->getMock('JsonSchema\Loader\CurlLoader', array('load', 'getContentType'));
+        $loader = $this->getMock('JsonSchema\Loader\CurlLoader', array('load', 'getContentType'));
 
-        $curlRetriever
+        $loader
             ->expects($this->at(0))
             ->method('load')
             ->with($this->equalTo('http://some.host.at/somewhere/parent'))
             ->will($this->returnValue($returnSchema));
 
-        $curlRetriever
+        $loader
             ->expects($this->atLeastOnce()) // index 1 and/or 3
             ->method('getContentType')
             ->will($this->returnValue($returnMediaType));
 
-        return $curlRetriever;
+        return $loader;
     }
 }

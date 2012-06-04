@@ -22,18 +22,6 @@ class FileGetContentsLoader implements LoaderInterface
     protected $messageBody;
 
     /**
-     * @param string $header
-     *
-     * @return string|null
-     */
-    protected static function getContentTypeMatchInHeader($header)
-    {
-        if (0 < preg_match("/Content-Type:(\V*)/ims", $header, $match)) {
-            return trim($match[1]);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function load($uri)
@@ -64,6 +52,14 @@ class FileGetContentsLoader implements LoaderInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function supports($uri)
+    {
+        return true;
+    }
+
+    /**
      * @param array $headers HTTP Response Headers
      *
      * @return boolean Whether the Content-Type header was found or not
@@ -71,11 +67,23 @@ class FileGetContentsLoader implements LoaderInterface
     private function fetchContentType(array $headers)
     {
         foreach ($headers as $header) {
-            if ($this->contentType = static::getContentTypeMatchInHeader($header)) {
+            if ($this->contentType = $this->getContentTypeMatchInHeader($header)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param string $header
+     *
+     * @return string|null
+     */
+    private function getContentTypeMatchInHeader($header)
+    {
+        if (0 < preg_match("/Content-Type:(\V*)/ims", $header, $match)) {
+            return trim($match[1]);
+        }
     }
 }

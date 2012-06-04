@@ -9,6 +9,7 @@
 
 namespace JsonSchema\Constraints;
 
+use JsonSchema\SchemaFactory;
 use JsonSchema\Validator;
 
 /**
@@ -128,7 +129,7 @@ class Undefined extends Constraint
         if ($resolver->isValid($schemaUri)) {
             $schemaId = property_exists($schema, 'id') ? $schema->id : null;
 
-            return Validator::retrieveUri($resolver->resolve($schemaUri, $schemaId));
+            return SchemaFactory::import($resolver->resolve($schemaUri, $schemaId));
         }
     }
 }

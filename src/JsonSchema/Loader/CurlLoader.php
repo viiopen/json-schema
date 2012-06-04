@@ -67,6 +67,14 @@ class CurlLoader implements LoaderInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function supports($uri)
+    {
+        return true;
+    }
+
+    /**
      * @param string $response cURL HTTP response
      *
      * @return boolean Whether the Content-Type header was found or not

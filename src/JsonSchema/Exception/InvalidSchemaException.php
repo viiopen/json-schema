@@ -10,8 +10,8 @@
 namespace JsonSchema\Exception;
 
 /**
- * Wrapper for the InvalidSchemaMediaType
+ * Wrapper for the InvalidSchema
  */
-class InvalidSchemaMediaTypeException extends \RuntimeException implements ExceptionInterface
+class InvalidSchemaException extends \RuntimeException implements ExceptionInterface
 {
 }

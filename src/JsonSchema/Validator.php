@@ -12,6 +12,7 @@ namespace JsonSchema;
 use JsonSchema\Constraints\Schema;
 use JsonSchema\Constraints\Constraint;
 
+use JsonSchema\Exception\InvalidArgumentException;
 use JsonSchema\Exception\InvalidSchemaMediaTypeException;
 use JsonSchema\Exception\JsonDecodingException;
 
@@ -22,53 +23,11 @@ use JsonSchema\Loader\LoaderInterface;
  *
  * @author Robert Schönthal <seroscho@googlemail.com>
  * @author Bruno Prieto Reis <bruno.p.reis@gmail.com>
+ * @author Justin Rainbow <justin.rainbow@gmail.com>
  * @see    README.md
  */
 class Validator extends Constraint
 {
-    const SCHEMA_MEDIA_TYPE = 'application/schema+json';
-
-    private static $uriRetriever;
-
-    /**
-     * Sets the URI retriever the validator will use. FileGetContents by default
-     *
-     * @param LoaderInterface $loader
-     */
-    public static function setUriRetriever(LoaderInterface $loader)
-    {
-        self::$uriRetriever = $loader;
-    }
-
-    /**
-     * @param string $uri JSON Schema URI
-     *
-     * @return string JSON Schema contents
-     *
-     * @throws InvalidSchemaMediaType for invalid media types
-     */
-    public static function retrieveUri($uri)
-    {
-        if (null === self::$uriRetriever) {
-            self::setUriRetriever(new Loader\FileGetContentsLoader());
-        }
-
-        $contents = self::$uriRetriever->load($uri);
-        if (self::SCHEMA_MEDIA_TYPE !== self::$uriRetriever->getContentType()) {
-            throw new InvalidSchemaMediaTypeException(sprintf('Media type %s expected', self::SCHEMA_MEDIA_TYPE));
-        }
-
-        $jsonSchema = json_decode($contents);
-        if (JSON_ERROR_NONE < $error = json_last_error()) {
-            throw new JsonDecodingException($error);
-        }
-
-        // TODO validate using schema)
-        $jsonSchema->id = $uri;
-
-        return $jsonSchema;
-    }
-
     /**
      * Validates the given data against the schema and returns an object containing the results
      * Both the php object and the schema are supposed to be a result of a json_decode call.
@@ -78,6 +37,10 @@ class Validator extends Constraint
      */
     public function check($value, $schema = null, $path = null, $i = null)
     {
+        if (null !== $schema && !$schema instanceof \JsonSchema\Schema) {
+            $schema = SchemaFactory::create($schema);
+        }
+
         $validator = new Schema($this->checkMode);
         $validator->check($value, $schema);
 

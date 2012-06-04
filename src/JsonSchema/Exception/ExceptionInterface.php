@@ -10,8 +10,11 @@
 namespace JsonSchema\Exception;
 
 /**
- * Wrapper for the InvalidSchemaMediaType
+ * Provides a common interface for all JsonSchema exceptions.  This allows
+ * for simpler `try { } catch (ExceptionInterface $e) { }` blocks.
+ *
+ * @author Justin Rainbow <justin.rainbow@gmail.com>
  */
-class InvalidSchemaMediaTypeException extends \RuntimeException implements ExceptionInterface
+interface ExceptionInterface
 {
 }
