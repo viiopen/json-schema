@@ -11,6 +11,7 @@ namespace JsonSchema\Constraints;
 
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\Uri\UriResolver;
+use JsonSchema\Exception\InvalidSourceUriException;
 
 /**
  * The Base Constraints, all Validators should extend this class
