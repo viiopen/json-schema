@@ -184,6 +184,11 @@ class UndefinedConstraint extends Constraint
         if (is_object($value) && isset($schema->dependencies)) {
             $this->validateDependencies($value, $schema->dependencies, $path);
         }
+
+        // Verify references to other schemas
+        if (!empty($schema->{'$ref'})) {
+            $this->checkSchema($value, $schema->{'$ref'}, $path, $i);
+        }
     }
 
     /**
@@ -304,4 +309,5 @@ class UndefinedConstraint extends Constraint
 
         return $jsonSchema;
     }
+
 }
