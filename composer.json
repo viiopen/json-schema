@@ -1,5 +1,5 @@
 {
-    "name": "bmatics/json-schema",
+    "name": "justinrainbow/json-schema",
     "description": "A library to validate a json schema.",
     "keywords": ["json", "schema"],
     "homepage": "https://github.com/bmatics/json-schema",
