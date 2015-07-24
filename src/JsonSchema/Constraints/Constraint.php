@@ -287,11 +287,13 @@ abstract class Constraint implements ConstraintInterface
      */
     protected function checkSchema($value, $schema, $path = null, $i = null)
     {
-        if (is_string($schema)) {
+        if (is_object($schema)) {
+            $retriever = $this->getUriRetriever();
+            $schemaId = $retriever->cacheSchema($schema);
+        } elseif (is_string($schema)) {
             $schema = $this->retrieveSchema($schema);
+            $schemaId = $schema->id;
         }
-        
-        $schemaId = !empty($schema->id)? $schema->id : null;
 
         $validator = new SchemaConstraint($this->checkMode, $this->uriRetriever, $this->uriResolver, $schemaId);
         $validator->check($value, $schema, $path, $i);

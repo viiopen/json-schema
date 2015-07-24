@@ -146,7 +146,7 @@ class UriRetriever
             $fetchUri = $resolver->generate($arParts);
         }
 
-        $jsonSchema = $this->loadSchema($fetchUri);
+        $jsonSchema = $this->loadSchema($fetchUri, $resolvedUri);
 
         // Use the JSON pointer if specified
         $jsonSchema = $this->resolvePointer($jsonSchema, $resolvedUri);
@@ -168,8 +168,8 @@ class UriRetriever
      */
     protected function loadSchema($fetchUri)
     {
-        if (isset($this->schemaCache[$fetchUri])) {
-            return $this->schemaCache[$fetchUri];
+        if ($jsonSchema = $this->getCachedSchema($fetchUri)) {
+            return $jsonSchema;
         }
 
         $uriRetriever = $this->getUriRetriever();
@@ -181,7 +181,7 @@ class UriRetriever
             throw new JsonDecodingException($error);
         }
 
-        $this->schemaCache[$fetchUri] = $jsonSchema;
+        $this->cacheSchema($jsonSchema, $fetchUri);
 
         return $jsonSchema;
     }
@@ -285,5 +285,40 @@ class UriRetriever
         $components = $this->parse($uri);
 
         return !empty($components);
+    }
+
+
+    public function cacheSchema($jsonSchema, $uri = null)
+    {
+        if (!$uri) {
+            if (!empty($jsonSchema->id)) {
+                $uri = $jsonSchema->id;
+            } else {
+                $uri = $this->generateUniqueTempUri();
+            }
+        }
+
+        if ($jsonSchema instanceof \stdClass) {
+            $jsonSchema->id = $uri;
+        }
+
+        $this->schemaCache[$uri] = $jsonSchema;
+
+        return $uri;
+    }
+
+    private function generateUniqueTempUri()
+    {
+        static $count = 0;
+        return 'temp'.$count++;
+    }
+
+    public function getCachedSchema($uri)
+    {
+        if (!empty($this->schemaCache[$uri])) {
+            return $this->schemaCache[$uri];
+        }
+
+        return null;
     }
 }
