@@ -94,9 +94,6 @@ class UriRetriever
      */
     public function resolvePointer($jsonSchema, $uri)
     {
-        // viiopen - until our system actually resolves pointers on the server, just...
-        return json_decode('{}');
-
         $resolver = new UriResolver();
         $parsed = $resolver->parse($uri);
         if (empty($parsed['fragment'])) {
